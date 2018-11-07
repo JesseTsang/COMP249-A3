@@ -1,4 +1,5 @@
 import java.io.File;
+import java.util.ArrayList;
 
 /**
  * 
@@ -10,6 +11,13 @@ import java.io.File;
  */
 public class BibCreator 
 {
+	public static final String directoryPath = "\\Resources";
+	
+	//ArrayList<File> bibFiles;
+	File[] bibFiles;
+	
+	ArrayList<Entry> bibEntries;
+	
 	/**
 	 * Constructor
 	 */
@@ -26,8 +34,22 @@ public class BibCreator
 	 */
 	public File[] readDirectory(String directoryPath)
 	{
+		System.out.println("directoryPath is: " + directoryPath);
 		
-		return null;		
+		//bibFiles = new ArrayList<File>();
+		
+		File directory = new File(directoryPath);
+		
+		bibFiles = directory.listFiles();
+		
+		System.out.println("The directory [" + directoryPath + "] constains the following files:");
+		
+		for(File path: bibFiles)
+		{
+			System.out.println(path);
+		}
+		
+		return bibFiles;		
 	}
 	
 	/**
@@ -36,8 +58,10 @@ public class BibCreator
 	 * @param file
 	 * @return
 	 */
-	public Entry[] readBiB (File file)
+	public ArrayList<Entry> readBiB (File file)
 	{
+		bibEntries = new ArrayList<Entry>();
+		
 		return null;	
 	}
 	
@@ -71,8 +95,7 @@ public class BibCreator
 	 */
 	public static void main(String[] args) 
 	{
-		// TODO Auto-generated method stub
-
+		BibCreator test1 = new BibCreator();
+		test1.readDirectory("C:\\Users\\Jesse\\eclipse-workspace\\COMP249-A3\\Resources");
 	}
-
 }

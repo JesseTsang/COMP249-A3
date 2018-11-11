@@ -7,14 +7,14 @@
  * 
  * @author Tsang Chi Kit
  */
-public class Entry
+public class Article
 {
 	private Element ID, author, journal, title, year, volume, number, pages, keywoards, doi, issn, month;
 	
 	/**
 	 * Default constructor
 	 */
-	public Entry()
+	public Article()
 	{
 		
 	}
@@ -22,7 +22,7 @@ public class Entry
 	/**
 	 * Parameterized constructor
 	 */
-	public Entry(Element ID, Element author, Element journal, Element title, Element year, 
+	public Article(Element ID, Element author, Element journal, Element title, Element year, 
 			Element volume, Element number, Element pages, Element keywoards, 
 			Element doi, Element issn, Element month)
 	{

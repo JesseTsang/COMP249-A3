@@ -11,12 +11,12 @@ import java.util.ArrayList;
  */
 public class BibCreator 
 {
-	public static final String directoryPath = "\\Resources";
+	public static final String directoryPath = "C:\\Users\\Jesse\\eclipse-workspace\\COMP249-A3\\Resources";
 	
 	//ArrayList<File> bibFiles;
 	File[] bibFiles;
 	
-	ArrayList<Entry> bibEntries;
+	ArrayList<Article> bibEntries;
 	
 	/**
 	 * Constructor
@@ -24,6 +24,21 @@ public class BibCreator
 	public BibCreator()
 	{
 		//do stuff
+	}
+	
+	/**
+	 * 
+	 */
+	public void startProcess()
+	{
+		bibFiles = readDirectory(directoryPath);
+		
+		//Each file would be 1 bib file ... which contain multiple articles
+		for(File path: bibFiles)
+		{
+			System.out.println(path);
+		}
+		
 	}
 	
 	/**
@@ -53,14 +68,14 @@ public class BibCreator
 	}
 	
 	/**
-	 * Will read a .bib file and output all entries into Entry objects.
+	 * Will read a .bib file and output all the articles into Entry objects.
 	 * 
 	 * @param file
 	 * @return
 	 */
-	public ArrayList<Entry> readBiB (File file)
+	public ArrayList<Article> readBiB (File file)
 	{
-		bibEntries = new ArrayList<Entry>();
+		bibEntries = new ArrayList<Article>();
 		
 		return null;	
 	}
@@ -70,7 +85,7 @@ public class BibCreator
 	 * 
 	 * @return boolean
 	 */
-	public boolean isValid(Entry entry)
+	public boolean isValid(Article entry)
 	{
 		return false;
 	}
@@ -83,7 +98,7 @@ public class BibCreator
 	 * 
 	 * @param entry
 	 */
-	public void fileCreator(Entry entry, int fileNumber)
+	public void fileCreator(Article entry, int fileNumber)
 	{
 		//Do stuff		
 	}

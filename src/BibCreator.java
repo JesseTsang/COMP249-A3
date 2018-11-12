@@ -1,4 +1,8 @@
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -11,7 +15,8 @@ import java.util.ArrayList;
  */
 public class BibCreator 
 {
-	public static final String directoryPath = "C:\\Users\\Jesse\\eclipse-workspace\\COMP249-A3\\Resources";
+	public static final String DIRECTORY_PATH = "C:\\Users\\Jesse\\eclipse-workspace\\COMP249-A3\\Resources";
+	public static final String DELIMITER = "@ARTICLE{";
 	
 	//ArrayList<File> bibFiles;
 	File[] bibFiles;
@@ -31,16 +36,44 @@ public class BibCreator
 	 */
 	public void startProcess()
 	{
-		bibFiles = readDirectory(directoryPath);
+		bibFiles = readDirectory(DIRECTORY_PATH);
+		
+		//File bibFile;
 		
 		//Each file would be 1 bib file ... which contain multiple articles
 		for(File path: bibFiles)
 		{
-			System.out.println(path);
+			if(isValidFileType(path))
+			{
+				System.out.println("File name: " + path);
+				System.out.println("Reading bib file ...");
+				
+				bibEntries = readBib(path);
+			}
+			
+			
+			
 		}
 		
 	}
 	
+	private boolean isValidFileType(File path)
+	{
+		String[] tokens = path.getName().split("\\.");
+		String fileType = tokens[1];
+
+		if(fileType.equals("bib"))
+		{
+			return true;
+		}
+		else
+		{
+			System.out.println("Invalid file type - Will not process this file: " + path);
+		}
+		
+		return false;
+	}
+
 	/**
 	 * This will read a directory and generate an array of File objects for further process.
 	 * 
@@ -49,7 +82,7 @@ public class BibCreator
 	 */
 	public File[] readDirectory(String directoryPath)
 	{
-		System.out.println("directoryPath is: " + directoryPath);
+		//System.out.println("directoryPath is: " + directoryPath);
 		
 		//bibFiles = new ArrayList<File>();
 		
@@ -57,12 +90,12 @@ public class BibCreator
 		
 		bibFiles = directory.listFiles();
 		
-		System.out.println("The directory [" + directoryPath + "] constains the following files:");
+		/*System.out.println("The directory [" + directoryPath + "] contains the following files:");
 		
 		for(File path: bibFiles)
 		{
 			System.out.println(path);
-		}
+		}*/
 		
 		return bibFiles;		
 	}
@@ -73,11 +106,59 @@ public class BibCreator
 	 * @param file
 	 * @return
 	 */
-	public ArrayList<Article> readBiB (File file)
+	public ArrayList<Article> readBib (File file)
 	{
-		bibEntries = new ArrayList<Article>();
+		ArrayList<Article> result = new ArrayList<Article>();
+		ArrayList<String> articleItem = new ArrayList<String>();
 		
-		return null;	
+		FileReader fileReader;
+		
+		try
+		{
+			fileReader = new FileReader(file);
+			
+			BufferedReader in = new BufferedReader(fileReader);
+			
+			String fileLine;
+			String articleString = "";
+			
+			System.out.println("Article starts ------------------");
+			
+			while((fileLine = in.readLine()) != null)
+			{				
+				//System.out.println(articleString);
+				
+				if(fileLine.startsWith("}"))
+				{
+					//Add last line of each article "{"
+					articleString = articleString + fileLine;
+					
+					//Add the article to the arrayList
+					articleItem.add(articleString);
+					
+					//Test purpose
+					System.out.println("Article done!");
+					System.out.println(articleString);
+					
+					//Reset the article chunk string
+					articleString = "";
+									
+				}
+				else
+				{
+					//If the line is not the last line ("{" symbol) then just concatenate the string
+					articleString = articleString + fileLine;
+				}
+			}
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		
+		System.out.println("Article end ------------------");
+		
+		return result;	
 	}
 	
 	/**
@@ -111,6 +192,6 @@ public class BibCreator
 	public static void main(String[] args) 
 	{
 		BibCreator test1 = new BibCreator();
-		test1.readDirectory("C:\\Users\\Jesse\\eclipse-workspace\\COMP249-A3\\Resources");
+		test1.startProcess();
 	}
 }

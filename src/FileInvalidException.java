@@ -1,3 +1,5 @@
+import java.io.File;
+
 /**
  * 
  */
@@ -9,22 +11,37 @@
 public class FileInvalidException extends Exception
 {
 	private static final long serialVersionUID = 1L;
-	private ErrorType[] errors;
+	private ErrorType error;
+	String fileName;
 	
-	
-	public FileInvalidException(ErrorType[] errors)
+	public FileInvalidException(ErrorType errorType)
 	{
-		this.errors = errors;		
+		this.error = errorType;
+		this.fileName = "";		
 	}
 	
-	/**
-	 * Getters and setters
-	 * 
-	 * @return
-	 */
-	public ErrorType[] getErrors()
+	public FileInvalidException(File file, ErrorType errorType)
 	{
-		return errors;
+		this.error = errorType;
+		this.fileName = file.getName();
+				
+		displayError();
+	}
+	
+	
+
+	/**
+	 * 
+	 */
+	private void displayError()
+	{
+		System.out.println("Error: Detected Empty Field!");
+		System.out.println("============================");
+		
+		System.out.println("");
+		
+		System.out.println("Problem detected with input file: " + fileName);
+		System.out.println("File is invalid: Field \"" + error.toString() + "\" is empty. Processing stopped at this point. Other empty fields may be present as well!");	
 	}
 
 	/**
@@ -32,9 +49,29 @@ public class FileInvalidException extends Exception
 	 * 
 	 * @return
 	 */
-	public void setErrors(ErrorType[] errors)
+	public ErrorType getErrors()
 	{
-		this.errors = errors;
+		return error;
+	}
+
+	/**
+	 * Getters and setters
+	 * 
+	 * @return
+	 */
+	public void setErrors(ErrorType errors)
+	{
+		this.error = errors;
+	}
+	
+	public String getFileName()
+	{
+		return fileName;
+	}
+
+	public void setFileName(String fileName)
+	{
+		this.fileName = fileName;
 	}
 
 	/**

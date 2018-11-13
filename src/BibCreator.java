@@ -43,18 +43,16 @@ public class BibCreator
 		//Each file would be 1 bib file ... which contain multiple articles
 		for(File path: bibFiles)
 		{
+			//If the file is of "bib" file type
 			if(isValidFileType(path))
 			{
 				System.out.println("File name: " + path);
 				System.out.println("Reading bib file ...");
 				
+				//Read the file ... output ArrayList<Article>
 				bibEntries = readBib(path);
-			}
-			
-			
-			
-		}
-		
+			}			
+		}	
 	}
 	
 	private boolean isValidFileType(File path)

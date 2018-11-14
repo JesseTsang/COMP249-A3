@@ -19,7 +19,6 @@ public class BibCreator
 	public static final String DIRECTORY_PATH = "C:\\Users\\Jesse\\eclipse-workspace\\COMP249-A3\\Resources";
 	public static final String ARTICLE_END_SYMBOL = "}";
 	
-	//ArrayList<File> bibFiles;
 	File[] bibFiles;
 	
 	ArrayList<Article> bibEntries;
@@ -48,8 +47,7 @@ public class BibCreator
 			{
 				System.out.println("File name: " + path);
 				System.out.println("Reading bib file ...");
-				
-				
+							
 				//Read the file ... output ArrayList<Article>
 				try
 				{
@@ -57,6 +55,8 @@ public class BibCreator
 				}
 				catch (FileInvalidException e)
 				{
+					//Continue the loop even if we catch an exception
+					//Checked exceptions (runtime exceptions)
 					continue;
 				}
 			}			
@@ -150,23 +150,25 @@ public class BibCreator
 									
 					//Add the article to the arrayList
 					articleItem.add(articleString);
-					
-					
-					
+								
 					//Test purpose
 					System.out.println("Article done!");
 					System.out.println(articleString);
 					
 					//Reset the article chunk string
-					articleString = "";
-									
+					articleString = "";							
 				}
 				else
 				{
 					//If the line is not the last line ("{" symbol) then just concatenate the string
 					articleString = articleString + fileLine;
 				}
-			}
+			}//end while
+			
+			//So at this point ...
+			//	1. We checked to make sure each line is valid
+			// 	2. We have concatenated all the valid line (for each article) to ArrayList<String> articleString which represents 1 article.
+			//	3. We will then loop ArrayList<String> articleString to create a Article object ... and add it to the ArrayList<Article> bibEntries.
 			
 			in.close();
 		}
@@ -174,7 +176,7 @@ public class BibCreator
 		{
 			e.printStackTrace();
 		}
-		
+			
 		System.out.println("Article end ------------------");
 			
 		return result;	
@@ -239,7 +241,6 @@ public class BibCreator
 			//Test purposes
 			/*System.out.println("Element: " + elementTokens[0]);
 			System.out.println("Value: " + value);*/	
-			
 		}
 				
 		return true;
@@ -260,9 +261,7 @@ public class BibCreator
 			return true;
 		}
 		catch(Exception e)
-		{
-			//System.out.println(string + " is not a number.");
-			
+		{		
 			return false;
 		}
 	}

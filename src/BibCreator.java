@@ -7,10 +7,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
- * 
- */
-
-/**
  * @author Jesse
  *
  */
@@ -51,7 +47,7 @@ public class BibCreator
 				//2. Read the bib file ... output ArrayList<Article>
 				try
 				{
-					bibEntries = readBib(path);
+					bibEntries = readBib(path); //ArrayList of Article objects
 				}
 				catch (FileInvalidException e)
 				{
@@ -123,8 +119,8 @@ public class BibCreator
 	 */
 	public ArrayList<Article> readBib (File file) throws FileInvalidException
 	{
-		ArrayList<Article> result = new ArrayList<Article>();
-		ArrayList<String> articleItem = new ArrayList<String>();
+		ArrayList<Article> document = new ArrayList<Article>();
+		ArrayList<String> articlesStrings = new ArrayList<String>();
 		
 		FileReader fileReader;
 		
@@ -135,45 +131,43 @@ public class BibCreator
 			BufferedReader in = new BufferedReader(fileReader);
 			
 			String fileLine;
-			String articleString = "";
-			
-			System.out.println("Article starts ------------------");
+	
+			//System.out.println("Article starts ------------------");
 			
 			while((fileLine = in.readLine()) != null)
 			{
+				//Remove all the empty lines
+				if(fileLine.equals(""))
+				{
+					continue;					
+				}
+				
 				//1. We check each line if they are a possible valid line in a bib file.
 				//	It is not valid if there is only element, but no value on the element-value pairs.
 				isValidArticle(file, fileLine);
-				
+							
+				//After finish reading each article ...
 				if(fileLine.startsWith(ARTICLE_END_SYMBOL))
 				{
-					//Add last line of each article "{"
-					articleString = articleString + fileLine;
-									
-					//Add the article to the arrayList
-					articleItem.add(articleString);
-								
-					//Test purpose
-					System.out.println("Article done!");
-					System.out.println(articleString);
-					
-					//Reset the article chunk string
-					articleString = "";							
+					//Pass the ArrayList<String> articlesStrings to create 1 Article object
+					//	then, add the object to the ArrayList<Article> document 
+					document.add(createArticle(articlesStrings));
+													
+					//Reset the article chunk string for next article
+					articlesStrings = new ArrayList<String>();			
 				}
 				else
 				{
-					//If the line is not the last line ("{" symbol) then just concatenate the string
-					articleString = articleString + fileLine;
+					//If the line is not the last line ("{" symbol) then add the line to the ArrayList<String> articlesStrings
+					articlesStrings.add(fileLine);
 				}
 			}//end while
 			
 			//So at this point ...
 			//	1. We checked to make sure each line is valid
-			// 	2. We have concatenated all the valid line (for each article) to ArrayList<String> articleString which represents 1 article.
-			//	3. We will then loop ArrayList<String> articleString to create a Article objects ... and return the ArrayList<Article> result.
-			
-			result = createArticles (articleString);
-			
+			// 	2. We have concatenated all the valid line (for each article) to String articleString which represents 1 article.
+			//	3. We will then loop ArrayList<String> articleStrings to create a Article objects ... and return the ArrayList<Article> document.
+					
 			in.close();
 		}
 		catch (IOException e)
@@ -181,16 +175,130 @@ public class BibCreator
 			e.printStackTrace();
 		}
 			
-		System.out.println("Article end ------------------");
+		//System.out.println("Article end ------------------");
+		
+		//Testing purpose
+		/*for(Article art: document)
+		{
+			System.out.println("ID: " + art.getID().getValue());
+			System.out.println("Title: " + art.getTitle().getValue());
+		}*/
 			
-		return result;	
+		return document;	
 	}
 	
-	private ArrayList<Article> createArticles(String articleString)
+	/**
+	 * Helper function to create an ArrayList<Article>
+	 * 
+	 * @param articleString
+	 * @return
+	 */
+	private Article createArticle(ArrayList<String> articlesStrings)
 	{
-		ArrayList<Article> result = new ArrayList<Article>();
+		Article result = new Article();
 		
+		for(String str: articlesStrings)
+		{		
+			//1. Remove any extra white spaces
+			str = str.trim();
+			
+			String subStr = "";
+			
+			if(str.startsWith("@ARTICLE{") || str.startsWith("}") || str.equals(""))
+			{
+				continue;			
+			}
+			
+			//2.1 It's also valid if the line is ID
+			//	The ID line has a format like [12345,], so we remove the last char and check if it's a number.
+			if(!str.equals("}"))
+			{
+				subStr = str.substring(0, str.length()-1);
+				
+				if(isNumber(subStr))
+				{
+					String elementName = "ID";
+					String IDvalue = subStr;
+	
+					Element ID = createElement(elementName, IDvalue);
+					
+					result.setID(ID);
+					
+					continue;
+				}
+			}
+			
+			//3. If it's not the above lines, then it must be a general line with element-value pair
+			//	So, we split the line by two, using "=" as delimiter
+			String[] elementTokens = subStr.split("=");
+			
+			String elementName = elementTokens[0];
+			String value = elementTokens[1].substring(1, elementTokens[1].length()-1).trim();
+								
+			switch(elementName)
+			{
+				case "author":
+					Element author = createElement(elementName, value);
+					result.setAuthor(author);
+					break;
+				case "journal":
+					Element journal = createElement(elementName, value);
+					result.setAuthor(journal);
+					break;
+				case "title":
+					Element title = createElement(elementName, value);
+					result.setTitle(title);
+					break;
+				case "year":
+					Element year = createElement(elementName, value);
+					result.setYear(year);
+					break;
+				case "volume":
+					Element volume = createElement(elementName, value);
+					result.setVolume(volume);
+					break;
+				case "number":
+					Element number = createElement(elementName, value);
+					result.setNumber(number);
+					break;
+				case "pages":
+					Element pages = createElement(elementName, value);
+					result.setPages(pages);
+					break;
+				case "keywords":
+					Element keywords = createElement(elementName, value);
+					result.setKeywoards(keywords);
+					break;
+				case "doi":
+					Element doi = createElement(elementName, value);
+					result.setDoi(doi);
+					break;
+				case "ISSN":
+					Element ISSN = createElement(elementName, value);
+					result.setIssn(ISSN);
+					break;
+				case "month":
+					Element month = createElement(elementName, value);
+					result.setMonth(month);
+					break;
+				default:
+					System.out.println("Missing element: " + elementName);
+			}	
+		}//end for loop
 		
+		return result;
+	}
+
+	/**
+	 * Helper function to create an Element object
+	 * 
+	 * @param element
+	 * @param value
+	 * @return
+	 */
+	private Element createElement(String elementName, String elementValue)
+	{	
+		Element result = new Element(elementName, elementValue);
 		
 		return result;
 	}
@@ -294,7 +402,6 @@ public class BibCreator
 		
 		return result;
 	}
-
 
 	/**
 	 * Will create 3 versions of JSON files

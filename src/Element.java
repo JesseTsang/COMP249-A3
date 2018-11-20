@@ -14,9 +14,9 @@
 public class Element 
 {
 	private String name;
-	private String[] value;
+	private String value;
 	
-	public Element(String name, String[] value)
+	public Element(String name, String value)
 	{
 		this.name = name;
 		this.value = value;		
@@ -44,7 +44,7 @@ public class Element
 	 * Getters and Setters
 	 * @return
 	 */
-	public String[] getValue()
+	public String getValue()
 	{
 		return value;
 	}
@@ -53,7 +53,7 @@ public class Element
 	 * Getters and Setters
 	 * @return
 	 */
-	public void setValue(String[] value)
+	public void setValue(String value)
 	{
 		this.value = value;
 	}
@@ -62,10 +62,7 @@ public class Element
 	 * @param args
 	 */
 	public static void main(String[] args) 
-	{
-		
+	{	
 		// TODO Auto-generated method stub
-
 	}
-
 }

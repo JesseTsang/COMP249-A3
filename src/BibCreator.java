@@ -2,9 +2,12 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Scanner;
 
 /**
  * @author Jesse
@@ -14,6 +17,11 @@ public class BibCreator
 {
 	public static final String DIRECTORY_PATH = "C:\\Users\\Jesse\\eclipse-workspace\\COMP249-A3\\Resources";
 	public static final String ARTICLE_END_SYMBOL = "}";
+	
+	public static final int MIN_LATEX_FILE_INT = 1;
+	public static final int MAX_LATEX_FILE_INT = 10;
+	
+	public static final int MAX_READ_FILE_CHANCE = 2;
 	
 	File[] bibFiles;
 	
@@ -31,7 +39,7 @@ public class BibCreator
 	 * @throws FileInvalidException 
 	 * 
 	 */
-	public void startProcess()
+	public void processFilesForValidation()
 	{
 		bibFiles = readDirectory(DIRECTORY_PATH);
 			
@@ -48,6 +56,9 @@ public class BibCreator
 				try
 				{
 					bibEntries = readBib(path); //ArrayList of Article objects
+					
+					//3. Process the ArrayList<Article> bibEntries and output JSON documents.
+					fileCreator(bibEntries, path);
 				}
 				catch (FileInvalidException e)
 				{
@@ -55,38 +66,69 @@ public class BibCreator
 					//Checked exceptions (runtime exceptions)
 					continue;
 				}
-			}//end if clause
-			
-			//3. Process the ArrayList<Article> bibEntries and output JSON documents.
-		}	
+				
+				
+			}//end if clause	
+		}
+		
+		//Process is done when reach here.
+		//We will ask user for filename to be display, chance = 2
+		displayJSON();
 	}
 	
+
+
 	/**
 	 * This will read a directory and generate an array of File objects for further process.
 	 * 
 	 * @param directoryPath
 	 * @return
 	 */
-	public File[] readDirectory(String directoryPath)
-	{
-		//System.out.println("directoryPath is: " + directoryPath);
-		
-		//bibFiles = new ArrayList<File>();
-		
+	private File[] readDirectory(String directoryPath)
+	{		
 		File directory = new File(directoryPath);
 		
 		bibFiles = directory.listFiles();
 		
-		/*System.out.println("The directory [" + directoryPath + "] contains the following files:");
-		
-		for(File path: bibFiles)
-		{
-			System.out.println(path);
-		}*/
-		
+		//Check if all Latex1-10.bib exist
+		isAllFileExist(directoryPath);
+			
 		return bibFiles;		
 	}
 	
+	/**
+	 * Helper function to check if all Latex files (1-10) exists.
+	 * 
+	 * @param directoryPath
+	 */
+	private void isAllFileExist(String directoryPath)
+	{
+		String[] latexFileNameList = new String[MAX_LATEX_FILE_INT];
+		
+		for(int i = MIN_LATEX_FILE_INT; i <= MAX_LATEX_FILE_INT; i++)
+		{
+			latexFileNameList[i-1] = "Latex" + i + ".bib";			
+		}
+		
+		for(int i = MIN_LATEX_FILE_INT; i <= MAX_LATEX_FILE_INT; i++)
+		{
+			File file = new File(directoryPath, latexFileNameList[i-1]);
+			
+			if(file.exists())
+			{
+				//System.out.println(file.getName() + " exist.");
+			}
+			else
+			{				
+				System.out.println("Could not open input file " + file.getName() + " for reading.");
+				System.out.println("");
+				System.out.println("Please check if file exists! Program will terminate after closing any opened files.");
+				
+				System.exit(1);
+			}			
+		}
+	}
+
 	/**
 	 * Helper function to weed out non bib files.
 	 * 
@@ -95,19 +137,26 @@ public class BibCreator
 	 */
 	private boolean isValidFileType(File path)
 	{
-		String[] tokens = path.getName().split("\\.");
-		String fileType = tokens[1];
-
-		if(fileType.equals("bib"))
+		//System.out.println("path" + path);
+		
+		if(path.isDirectory())
 		{
-			return true;
-		}
-		else
-		{
-			System.out.println("Invalid file type - Will not process this file: " + path);
+			return false;
 		}
 		
-		return false;
+		String[] tokens = path.getName().split("\\.");
+		String fileType = tokens[1];
+		
+		String checkIfValidLatex = tokens[0].replaceAll("Latex", "");
+		
+		if(!isNumber(checkIfValidLatex) || !fileType.equals("bib"))
+		{
+			System.out.println("Invalid file type - Will not process this file: " + path);
+			
+			return false;
+		}
+	
+		return true;
 	}
 	
 	/**
@@ -117,7 +166,7 @@ public class BibCreator
 	 * @return
 	 * @throws FileInvalidException 
 	 */
-	public ArrayList<Article> readBib (File file) throws FileInvalidException
+	private ArrayList<Article> readBib (File file) throws FileInvalidException
 	{
 		ArrayList<Article> document = new ArrayList<Article>();
 		ArrayList<String> articlesStrings = new ArrayList<String>();
@@ -243,7 +292,7 @@ public class BibCreator
 					break;
 				case "journal":
 					Element journal = createElement(elementName, value);
-					result.setAuthor(journal);
+					result.setJournal(journal);
 					break;
 				case "title":
 					Element title = createElement(elementName, value);
@@ -409,11 +458,163 @@ public class BibCreator
 	 * 	2. ACM[x].json
 	 * 	3. NJ[x].json
 	 * 
-	 * @param entry
+	 * @param articlesArray
 	 */
-	public void fileCreator(Article entry, int fileNumber)
+	private void fileCreator(ArrayList<Article> articlesArray, File filePath)
 	{
-		//Do stuff		
+		String fileName = filePath.getName();
+		
+		String fileNumberStr = fileName.replaceAll("Latex", "");
+		fileNumberStr = fileNumberStr.replaceAll(".bib", "");
+	
+		int fileNumber = Integer.parseInt(fileNumberStr);
+		
+		String IEEEFileName = "\\IEEE" + fileNumber + ".json";
+		String ACMFileName = "\\ACM" + fileNumber + ".json";
+		String NJFileName = "\\NJ" + fileNumber + ".json";
+			
+		try
+		{
+			int counter = 1;
+			
+			FileWriter writer = new FileWriter(DIRECTORY_PATH + IEEEFileName);
+			PrintWriter printWriter = new PrintWriter(writer);
+				
+			//Create IEEE.json
+			for(Article art: articlesArray)
+			{
+				String author = art.getAuthor().getValue();
+				String title = art.getTitle().getValue();
+				String journal = art.getJournal().getValue();
+				String volume = art.getVolume().getValue();
+				String number = art.getNumber().getValue();
+				String pages = art.getPages().getValue();
+				String month = art.getMonth().getValue();
+				String year = art.getYear().getValue();
+				
+				printWriter.println(author + ". \"" + title + "\"," + journal + ", vol. " + volume + ", no. " + number
+						+ ", p. " + pages +", " + month + " " + year + ".");
+				
+				printWriter.println("");
+			}
+			
+			FileWriter writer2 = new FileWriter(DIRECTORY_PATH + ACMFileName);
+			PrintWriter printWriter2 = new PrintWriter(writer2);
+				
+			//Create ACM.json
+			for(Article art: articlesArray)
+			{
+				String author = art.getAuthor().getValue();
+				String firstAuthor = author.split(",")[0];
+				String title = art.getTitle().getValue();
+				String journal = art.getJournal().getValue();
+				String volume = art.getVolume().getValue();
+				String number = art.getNumber().getValue();
+				String pages = art.getPages().getValue();
+				String year = art.getYear().getValue();
+				String doi = art.getDoi().getValue();
+				
+				printWriter2.println("[" + counter +"] " + firstAuthor + " et al. " + year + ". " + title + ". " + journal + ". " + volume + ", " 
+						+ number + "(" + year + "), " + pages + ". DOI:http:" + doi + ".");
+				
+				printWriter2.println("");
+				
+				counter = counter + 1;
+			}
+			
+			FileWriter writer3 = new FileWriter(DIRECTORY_PATH + NJFileName);
+			PrintWriter printWriter3 = new PrintWriter(writer3);
+				
+			//Create NJ.json
+			for(Article art: articlesArray)
+			{
+				String author = art.getAuthor().getValue().replaceAll(",", " & ");
+				String title = art.getTitle().getValue();
+				String journal = art.getJournal().getValue();
+				String volume = art.getVolume().getValue();
+				String pages = art.getPages().getValue();
+				String year = art.getYear().getValue();
+				
+				printWriter3.println(author + ". " + title + ". " + journal + ". " + volume + ", " + pages + "(" + year + ").");
+				
+				printWriter3.println("");
+			}
+			
+			printWriter.close();
+			printWriter2.close();
+			printWriter3.close();
+		}
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private void displayJSON()
+	{
+		Scanner in = new Scanner(System.in);
+		
+		int remainingChance = MAX_READ_FILE_CHANCE;
+		
+		String fileName;
+		
+		FileReader fileReader;
+				
+		while(remainingChance > 0)
+		{
+			System.out.print("Please enter the name of one of the files that you need to review (type E to exit): ");
+			
+			fileName = in.next().trim();
+			
+			if(fileName.equals("E"))
+			{
+				System.out.println("Ending program command received. Ending program.");
+				
+				System.exit(1);				
+			}
+			
+			fileName = DIRECTORY_PATH + "\\" + fileName;
+			
+			System.out.println("fileName: " + fileName);	
+			
+			File jsonFile = new File(fileName);
+			
+			if(jsonFile.exists())
+			{		
+				try
+				{
+					fileReader = new FileReader(fileName);
+					BufferedReader br = new BufferedReader(fileReader);
+					
+					String fileLine;
+								
+					while((fileLine = br.readLine()) != null)
+					{
+						System.out.println(fileLine);	
+					}
+					
+					br.close();
+				}
+				catch (IOException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			else
+			{		
+				remainingChance = remainingChance - 1;
+				
+				System.out.println("Could not open input file. File does not exist; possible it could not be created!. Remaining chance = " + remainingChance);
+			}		
+		}//end while
+		
+		in.close();
+		
+		System.out.println("Sorry! I am unable to display your desired files! Program will exit!");
+		
+		System.exit(1);
 	}
 
 	/**
@@ -425,6 +626,6 @@ public class BibCreator
 	public static void main(String[] args) throws FileInvalidException 
 	{
 		BibCreator test1 = new BibCreator();
-		test1.startProcess();
+		test1.processFilesForValidation();
 	}
 }

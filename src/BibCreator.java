@@ -42,13 +42,13 @@ public class BibCreator
 		//Each file would be 1 bib file ... which contain multiple articles
 		for(File path: bibFiles)
 		{
-			//If the file is of "bib" file type
+			//1. Check if the file is of "bib" file type
 			if(isValidFileType(path))
 			{
 				System.out.println("File name: " + path);
 				System.out.println("Reading bib file ...");
 							
-				//Read the file ... output ArrayList<Article>
+				//2. Read the bib file ... output ArrayList<Article>
 				try
 				{
 					bibEntries = readBib(path);
@@ -59,7 +59,9 @@ public class BibCreator
 					//Checked exceptions (runtime exceptions)
 					continue;
 				}
-			}			
+			}//end if clause
+			
+			//3. Process the ArrayList<Article> bibEntries and output JSON documents.
 		}	
 	}
 	
@@ -168,7 +170,9 @@ public class BibCreator
 			//So at this point ...
 			//	1. We checked to make sure each line is valid
 			// 	2. We have concatenated all the valid line (for each article) to ArrayList<String> articleString which represents 1 article.
-			//	3. We will then loop ArrayList<String> articleString to create a Article object ... and add it to the ArrayList<Article> bibEntries.
+			//	3. We will then loop ArrayList<String> articleString to create a Article objects ... and return the ArrayList<Article> result.
+			
+			result = createArticles (articleString);
 			
 			in.close();
 		}
@@ -182,6 +186,15 @@ public class BibCreator
 		return result;	
 	}
 	
+	private ArrayList<Article> createArticles(String articleString)
+	{
+		ArrayList<Article> result = new ArrayList<Article>();
+		
+		
+		
+		return result;
+	}
+
 	/**
 	 * We want to check if a line from any bib file is valid.
 	 * 

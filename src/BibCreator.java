@@ -36,8 +36,9 @@ public class BibCreator
 	}
 	
 	/**
-	 * @throws FileInvalidException 
+	 * Core method. Interface with other method for reading files and output json files.
 	 * 
+	 * @throws FileInvalidException 
 	 */
 	public void processFilesForValidation()
 	{
@@ -65,9 +66,7 @@ public class BibCreator
 					//Continue the loop even if we catch an exception
 					//Checked exceptions (runtime exceptions)
 					continue;
-				}
-				
-				
+				}	
 			}//end if clause	
 		}
 		
@@ -76,7 +75,6 @@ public class BibCreator
 		displayJSON();
 	}
 	
-
 
 	/**
 	 * This will read a directory and generate an array of File objects for further process.
@@ -151,7 +149,7 @@ public class BibCreator
 		
 		if(!isNumber(checkIfValidLatex) || !fileType.equals("bib"))
 		{
-			System.out.println("Invalid file type - Will not process this file: " + path);
+			//System.out.println("Invalid file type - Will not process this file: " + path);
 			
 			return false;
 		}
@@ -223,15 +221,6 @@ public class BibCreator
 		{
 			e.printStackTrace();
 		}
-			
-		//System.out.println("Article end ------------------");
-		
-		//Testing purpose
-		/*for(Article art: document)
-		{
-			System.out.println("ID: " + art.getID().getValue());
-			System.out.println("Title: " + art.getTitle().getValue());
-		}*/
 			
 		return document;	
 	}

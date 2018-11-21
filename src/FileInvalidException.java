@@ -5,7 +5,7 @@ import java.io.File;
  */
 
 /**
- * @author Jesse
+ * @author Tsang Chi Kit
  *
  */
 public class FileInvalidException extends Exception
@@ -29,19 +29,22 @@ public class FileInvalidException extends Exception
 	}
 	
 	
-
 	/**
-	 * 
+	 * Helper function to display the error summary.
 	 */
 	private void displayError()
 	{
+		System.out.println("");
+		
 		System.out.println("Error: Detected Empty Field!");
 		System.out.println("============================");
 		
 		System.out.println("");
 		
 		System.out.println("Problem detected with input file: " + fileName);
-		System.out.println("File is invalid: Field \"" + error.toString() + "\" is empty. Processing stopped at this point. Other empty fields may be present as well!");	
+		System.out.println("File is invalid: Field \"" + error.toString() + "\" is empty. Processing stopped at this point. Other empty fields may be present as well!");
+		
+		System.out.println("");
 	}
 
 	/**

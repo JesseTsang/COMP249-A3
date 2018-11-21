@@ -50,8 +50,7 @@ public class BibCreator
 			//1. Check if the file is of "bib" file type
 			if(isValidFileType(path))
 			{
-				System.out.println("File name: " + path);
-				System.out.println("Reading bib file ...");
+				System.out.println("Reading bib file ... file name: " + path);
 							
 				//2. Read the bib file ... output ArrayList<Article>
 				try
@@ -342,7 +341,7 @@ public class BibCreator
 	}
 
 	/**
-	 * We want to check if a line from any bib file is valid.
+	 * Helper function to check if parameter (any possible line from a bib file) is valid.
 	 * 
 	 * @param file
 	 * @param articleString

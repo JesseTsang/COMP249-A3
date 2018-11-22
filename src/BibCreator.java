@@ -1,12 +1,12 @@
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Scanner;
 
 /**
@@ -177,6 +177,13 @@ public class BibCreator
 		{
 			fileReader = new FileReader(file);
 			
+			/*FileInputStream is = new FileInputStream(file);
+			InputStreamReader isr = new InputStreamReader(is);
+			
+			String encoding = isr.getEncoding();
+			
+			System.out.println(encoding);*/
+			
 			BufferedReader in = new BufferedReader(fileReader);
 			
 			String fileLine;
@@ -185,6 +192,8 @@ public class BibCreator
 			
 			while((fileLine = in.readLine()) != null)
 			{
+				fileLine = fileLine.replace("\uFEFF", "");
+				
 				//Remove all the empty lines
 				if(fileLine.equals(""))
 				{
@@ -244,7 +253,7 @@ public class BibCreator
 			
 			String subStr = "";
 			
-			if(str.startsWith("@ARTICLE{") || str.startsWith("}") || str.equals(""))
+			if(str.startsWith("@ARTICLE{") || str.startsWith("}") || str.equals("") || str.startsWith("﻿@ARTICLE{"))
 			{
 				continue;			
 			}
@@ -362,7 +371,7 @@ public class BibCreator
 		//	@ARTICLE{
 		//	}
 		//	"" (Empty space)
-		if(articleString.startsWith("@ARTICLE{") || articleString.startsWith("}") || articleString.equals(""))
+		if(articleString.startsWith("@ARTICLE{") || articleString.startsWith("}") || articleString.equals("") || articleString.startsWith("﻿@ARTICLE{"))
 		{
 			return true;			
 		}
@@ -378,6 +387,8 @@ public class BibCreator
 				return true;
 			}
 		}
+		
+		//System.out.println("substr: " + subStr);
 		
 		//3. If it's not the above lines, then it must be a general line with element-value pair
 		//	So, we split the line by two, using "=" as delimiter

@@ -10,8 +10,11 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 /**
- * @author Jesse
- *
+ * ------------------------------------
+ * COMP 249-D Assignment #3
+ * 
+ * @author Tsang Chi Kit (ID: 25692636)
+ * ------------------------------------
  */
 public class BibCreator 
 {

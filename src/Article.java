@@ -1,11 +1,11 @@
 /**
+ * ------------------------------------
+ * COMP 249-D Assignment #3
  * 
- */
-
-/**
  * Each entry class object represents an article in the bib file.
  * 
- * @author Tsang Chi Kit
+ * @author Tsang Chi Kit (ID: 25692636)
+ * ------------------------------------
  */
 public class Article
 {
@@ -160,14 +160,4 @@ public class Article
 	{
 		this.month = month;
 	}
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args)
-	{
-		// TODO Auto-generated method stub
-
-	}
-
 }

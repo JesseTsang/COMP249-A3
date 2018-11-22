@@ -1,12 +1,11 @@
 import java.io.File;
 
 /**
+ * ------------------------------------
+ * COMP 249-D Assignment #3
  * 
- */
-
-/**
- * @author Tsang Chi Kit
- *
+ * @author Tsang Chi Kit (ID: 25692636)
+ * ------------------------------------
  */
 public class FileInvalidException extends Exception
 {
@@ -76,14 +75,4 @@ public class FileInvalidException extends Exception
 	{
 		this.fileName = fileName;
 	}
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args)
-	{
-		// TODO Auto-generated method stub
-
-	}
-
 }

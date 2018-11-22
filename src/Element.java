@@ -1,15 +1,14 @@
 /**
+ * ------------------------------------
+ * COMP 249-D Assignment #3
  * 
- */
-
-/**
  * Each field on each article would be an element.
  * Each element would have 
  * 	(1) a name
  * 	(2) a string array of value[s]
  * 
- * @author Jesse
- *
+ * @author Tsang Chi Kit (ID: 25692636)
+ * ------------------------------------
  */
 public class Element 
 {
@@ -56,13 +55,5 @@ public class Element
 	public void setValue(String value)
 	{
 		this.value = value;
-	}
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) 
-	{	
-		// TODO Auto-generated method stub
 	}
 }

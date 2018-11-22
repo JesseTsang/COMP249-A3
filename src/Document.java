@@ -1,12 +1,13 @@
 import java.util.ArrayList;
 
 /**
+ * ------------------------------------
+ * COMP 249-D Assignment #3
  * 
- */
-
-/**
- * @author Jesse
- *
+ * Each document represents a bib file.
+ * 
+ * @author Tsang Chi Kit (ID: 25692636)
+ * ------------------------------------
  */
 public class Document
 {
@@ -39,14 +40,4 @@ public class Document
 	{
 		this.documentName = documentName;
 	}
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args)
-	{
-		// TODO Auto-generated method stub
-
-	}
-
 }
